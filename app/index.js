@@ -1,8 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { View, StyleSheet, ActivityIndicator, Share, TouchableOpacity, Text } from "react-native";
-import { GiftedChat, Bubble, InputToolbar, Send } from "react-native-gifted-chat";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import { View, StyleSheet, ActivityIndicator, Share, TextInput, Text, KeyboardAvoidingView, TouchableOpacity } from "react-native";
 import { debounce } from "lodash";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export const generateContent = async (prompt) => {
   const apiKey = "AIzaSyCrrE-cAFlFARVRvUpUl_13uSSqgENgnbE"; // Replace with your actual API key
@@ -39,6 +38,7 @@ export const generateContent = async (prompt) => {
 };
 
 const GrammarCorrector = () => {
+  const [text, setText] = useState("");
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState(null);
@@ -92,8 +92,7 @@ const GrammarCorrector = () => {
     setMessages((previousMessages) => GiftedChat.prepend(newMessages, previousMessages));
   };
 
-  const handleSend = useCallback((messages = []) => {
-    const text = messages[0].text.trim();
+  const handleSend = useCallback(() => {
     if (text.length === 0) return;
 
     setIsTyping(true);
@@ -117,87 +116,59 @@ const GrammarCorrector = () => {
     }
   };
 
-  const renderBubble = (props) => (
-    <Bubble
-      {...props}
-      wrapperStyle={{
-        right: { backgroundColor: "#DCF8C6" },
-        left: { backgroundColor: "#FFFFFF" },
-      }}
-      textStyle={{
-        right: { color: "#000" },
-        left: { color: "#000" },
-      }}
-    />
-  );
-
-  const renderInputToolbar = (props) => (
-    <InputToolbar {...props} containerStyle={styles.inputContainer} primaryStyle={styles.inputPrimary} />
-  );
-
-  const renderSend = (props) => (
-    <Send {...props} containerStyle={styles.sendContainer}>
-      <Icon name="send" size={24} color="#0084ff" style={styles.sendButton} />
-    </Send>
-  );
-
-  const renderActions = () => (
-    <TouchableOpacity style={styles.attachButton}>
-      <Icon name="spellcheck" size={24} color="#0084ff" />
-    </TouchableOpacity>
-  );
-
-  const renderFooter = () => (
-    <View style={styles.footer}>
-      {isTyping && <ActivityIndicator size="small" color="#666" />}
-      {error && <Text style={styles.errorText}>{error}</Text>}
-    </View>
-  );
-
-  const renderMessageOptions = (message) => (
-    <View style={styles.messageOptions}>
-      <TouchableOpacity onPress={() => copyToClipboard(message.text)}>
-        <Icon name="content-copy" size={20} color="#666" style={styles.optionIcon} />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => handleShare(message.text)}>
-        <Icon name="share" size={20} color="#666" style={styles.optionIcon} />
-      </TouchableOpacity>
-    </View>
-  );
-
-  const renderSystemMessage = (props) => (
-    <View style={styles.systemBubble}>
-      <Text style={styles.correctionHeader}>Corrected Version:</Text>
-      <Text style={styles.correctedText}>{props.currentMessage.text}</Text>
-      {renderMessageOptions(props.currentMessage)}
-      <Text style={styles.originalText}>Original: "{props.currentMessage.originalText}"</Text>
-    </View>
-  );
-
   return (
-    <View style={styles.container}>
-      <GiftedChat
-        messages={messages}
-        onSend={handleSend}
-        user={{ _id: 1 }}
-        renderBubble={renderBubble}
-        renderInputToolbar={renderInputToolbar}
-        renderSend={renderSend}
-        renderActions={renderActions}
-        renderFooter={renderFooter}
-        renderSystemMessage={renderSystemMessage}
-        placeholder="Type a sentence to check grammar..."
-        alwaysShowSend
-        textInputProps={{ autoCapitalize: "sentences" }}
-      />
-    </View>
+    <KeyboardAvoidingView behavior="height" style={styles.container}>
+      <View style={styles.messageContainer}>
+        <Text>Messages</Text>
+      </View>
+      <View style={styles.FooterContainer}>
+        <TextInput
+          multiline={true}
+          style={styles.input}
+          placeholder="Type your message..."
+          onChangeText={(t) => {
+            setText(t);
+          }}
+          value={text}
+        />
+        <View style={styles.sendButtonContainer}>
+          <TouchableOpacity style={styles.sendContainer} onPress={handleSend}>
+            <MaterialIcons name="send" size={30} color="red" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
+  sendContainer: {
+    padding: 10,
+    // backgroundColor: "red",
+  },
+  sendButtonContainer: {
+    justifyContent: "flex-end",
+    // backgroundColor: "blue",
+  },
+  FooterContainer: {
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "red",
+    borderRadius: 8,
+    margin: 5,
+  },
+  messageContainer: {
+    flex: 1,
+  },
+  input: {
+    width: "88%",
+    minHeight: 40,
+    maxHeight: 300,
+    paddingLeft: 10,
+    paddingVertical: 8,
+  },
   container: {
     flex: 1,
-    backgroundColor: "#F0F0F0",
   },
   systemBubble: {
     backgroundColor: "#FFF",
@@ -233,24 +204,21 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   footer: {
-    height: 24,
     paddingHorizontal: 16,
+    backgroundColor: "red",
   },
   errorText: {
     color: "red",
     fontSize: 12,
   },
   inputContainer: {
-    backgroundColor: "#FFF",
+    backgroundColor: "blue",
     borderTopWidth: 1,
     borderTopColor: "#E0E0E0",
+    maxHeight: 800,
     padding: 8,
   },
-  sendContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 12,
-  },
+
   attachButton: {
     paddingHorizontal: 12,
     justifyContent: "center",
