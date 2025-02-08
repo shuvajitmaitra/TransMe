@@ -55,7 +55,7 @@ const GrammarCorrector = () => {
   const inputRef = useRef<TextInput>(null);
 
   const [messages, setMessages] = useState<TResult[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
+  // const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState(null);
 
   const handleChangeText = useCallback((t: string) => {
@@ -64,8 +64,10 @@ const GrammarCorrector = () => {
 
   const processText = async (inputText: string) => {
     const prompt = `Correct this English text: "${inputText}". 
-Return only the corrected version without explanations or markdown. 
-Maintain original meaning. If already correct, return "No errors found".`;
+Return only the corrected version without explanations or markdown.
+correct spelling mistakes. 
+Maintain original meaning. If already correct, return "No correction needed...".
+If user send follow up question give the answer of it`;
 
     try {
       const response = await generateContent(prompt);
@@ -84,7 +86,7 @@ Maintain original meaning. If already correct, return "No errors found".`;
         } catch (err: any) {
           setError(err.message);
         } finally {
-          setIsTyping(false);
+          // setIsTyping(false);
         }
       }, 1500),
     []
@@ -113,7 +115,7 @@ Maintain original meaning. If already correct, return "No errors found".`;
   const handleSend = useCallback(() => {
     const currentText = textRef.current;
     if (!currentText || currentText.trim().length === 0) return;
-    setIsTyping(true);
+    // setIsTyping(true);
     setError(null);
     debouncedProcessText(currentText);
     // Add the new message with the original text
@@ -165,7 +167,7 @@ Maintain original meaning. If already correct, return "No errors found".`;
           <MaterialIcons name="send" size={30} color={Colors.text} />
         </TouchableOpacity>
       </View>
-      {isTyping && <ActivityIndicator style={styles.typingIndicator} color={Colors.primary} />}
+      {/* {isTyping && <ActivityIndicator style={styles.typingIndicator} color={Colors.primary} />} */}
       {error && <Text style={styles.errorText}>{error}</Text>}
     </ReactNativeModal>
   );

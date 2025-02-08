@@ -51,7 +51,7 @@ const Message = ({ message }: { message: TResult }) => {
             <BlinkingText style={styles.blinkingText}>Thinking...</BlinkingText>
           )}
         </View>
-        {message.text && message.text !== "No errors found" && (
+        {message.text && message.text !== "No correction needed..." && (
           <View style={styles.responseIcons}>
             <TouchableOpacity onPress={handleCopyResponse} style={styles.responseIcon}>
               <MaterialIcons name="content-copy" size={18} color={Colors.primary} />
