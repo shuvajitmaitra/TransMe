@@ -98,30 +98,16 @@ Maintain original meaning. If already correct, return "No errors found".`;
           {
             _id: Math.round(Math.random() * 1000000),
             text: correction,
-            createdAt: new Date().toISOString(),
+            createdAt: new Date(),
             system: true,
-            originalText: prevMessages.length > 0 ? prevMessages[prevMessages.length - 1].text : "",
-            user: {
-              _id: 2,
-              name: "System",
-            },
+            user: { _id: Math.round(Math.random() * 999999), name: "Trans Me" },
           },
         ];
       }
-      return [
-        ...prevMessages,
-        {
-          _id: Math.round(Math.random() * 1000000),
-          text: correction,
-          createdAt: new Date().toISOString(),
-          system: true,
-          originalText: prevMessages[prevMessages.length - 1].text,
-          user: {
-            _id: 2,
-            name: "System",
-          },
-        },
-      ];
+      const updatedMessages = [...prevMessages];
+      updatedMessages[0] = { ...updatedMessages[0], text: correction };
+
+      return updatedMessages;
     });
   };
 
@@ -135,7 +121,7 @@ Maintain original meaning. If already correct, return "No errors found".`;
     const newMessage = {
       _id: Math.round(Math.random() * 1000000),
       text: "",
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
       system: true,
       originalText: currentText,
       user: { _id: Math.round(Math.random() * 999999), name: "Trans Me" },
@@ -187,7 +173,6 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     flex: 1,
-    padding: 10,
   },
   FooterContainer: {
     flexDirection: "row",

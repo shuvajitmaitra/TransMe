@@ -3,7 +3,7 @@ export interface TResult {
   text: string;
   createdAt: string | Date; // Allow both string and Date
   system: boolean;
-  originalText: string;
+  originalText?: string;
   user: User;
 }
 
