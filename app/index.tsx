@@ -135,14 +135,14 @@ If user send follow up question give the answer of it`;
       inputRef.current.clear();
     }
   }, [debouncedProcessText]);
-  const { top } = useSafeAreaInsets();
+  const { top, bottom } = useSafeAreaInsets();
 
   return (
     <ReactNativeModal animationIn={"fadeIn"} isVisible={true} avoidKeyboard={true} style={[styles.container]}>
       <StatusBar backgroundColor={Colors.primary} />
       <View style={styles.messageContainer}>
-        <View style={[styles.header, { paddingTop: top / 2 }]}>
-          <Text style={styles.headerText}>TransMe</Text>
+        <View style={[styles.header, { paddingTop: Platform.OS === "ios" ? top / 1.2 : top / 2 }]}>
+          <Text style={styles.headerText}>ReviseMe</Text>
           <Text style={styles.headerDescriptionText}>Make it work, make it right, make it fast.</Text>
         </View>
         <FlatList
@@ -153,7 +153,7 @@ If user send follow up question give the answer of it`;
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
         />
       </View>
-      <View style={[styles.FooterContainer]}>
+      <View style={[styles.FooterContainer, Platform.OS === "ios" && { marginBottom: bottom / 1.5 }]}>
         <TextInput
           ref={inputRef} // Attach the ref here
           style={styles.input}
