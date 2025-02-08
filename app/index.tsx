@@ -1,16 +1,5 @@
 import React, { useRef, useState, useCallback, useMemo } from "react";
-import {
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  Share,
-  TextInput,
-  Text,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  Clipboard,
-  FlatList,
-} from "react-native";
+import { View, StyleSheet, ActivityIndicator, TextInput, Text, KeyboardAvoidingView, TouchableOpacity, FlatList } from "react-native";
 import { debounce } from "lodash";
 import { MaterialIcons } from "@expo/vector-icons";
 import { API_KEY } from "@/constants/env";
@@ -78,7 +67,7 @@ Maintain original meaning. If already correct, return "No errors found".`;
 
   const debouncedProcessText = useMemo(
     () =>
-      debounce(async (inputText) => {
+      debounce(async (inputText: string) => {
         try {
           const correction = await processText(inputText);
           addCorrectionMessage(correction);
@@ -126,7 +115,6 @@ Maintain original meaning. If already correct, return "No errors found".`;
       originalText: currentText,
       user: { _id: Math.round(Math.random() * 999999), name: "Trans Me" },
     };
-    console.log("newMessage", JSON.stringify(newMessage, null, 2));
     setMessages((prev) => [newMessage, ...prev]);
 
     textRef.current = "";

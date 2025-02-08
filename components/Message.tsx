@@ -1,19 +1,20 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Clipboard, Share } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Share } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TResult } from "@/type/messageType";
 import BlinkingText from "./BlinkingText";
+import * as Clipboard from "expo-clipboard";
 
 const Message = ({ message }: { message: TResult }) => {
   // Copies the original text to the clipboard
   const handleCopyOriginal = () => {
-    Clipboard.setString(message?.originalText || "");
+    Clipboard.setStringAsync(message?.originalText || "");
   };
 
   // Copies the response text to the clipboard (if available)
   const handleCopyResponse = () => {
     if (message.text) {
-      Clipboard.setString(message.text);
+      Clipboard.setStringAsync(message.text);
     }
   };
 
