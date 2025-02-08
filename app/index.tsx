@@ -1,10 +1,25 @@
 import React, { useRef, useState, useCallback, useMemo } from "react";
-import { View, StyleSheet, ActivityIndicator, TextInput, Text, KeyboardAvoidingView, TouchableOpacity, FlatList } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  TextInput,
+  Text,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+  FlatList,
+  Platform,
+  StatusBar,
+} from "react-native";
 import { debounce } from "lodash";
 import { MaterialIcons } from "@expo/vector-icons";
 import { API_KEY } from "@/constants/env";
 import Message from "@/components/Message";
 import { TResult } from "@/type/messageType";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Colors from "@/constants/Colors";
+import { Stack } from "expo-router";
+import ReactNativeModal from "react-native-modal";
 
 export const generateContent = async (prompt: string) => {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
@@ -27,7 +42,6 @@ export const generateContent = async (prompt: string) => {
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`);
     }
-
     const data = await response.json();
     return data;
   } catch (error) {
@@ -37,17 +51,13 @@ export const generateContent = async (prompt: string) => {
 };
 
 const GrammarCorrector = () => {
-  // Ref for storing text content (not linked to input display)
   const textRef = useRef("");
-  // New ref for the TextInput component
   const inputRef = useRef<TextInput>(null);
 
   const [messages, setMessages] = useState<TResult[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState(null);
-  console.log("Re-rendered");
 
-  // Update textRef on change
   const handleChangeText = useCallback((t: string) => {
     textRef.current = t;
   }, []);
@@ -106,7 +116,7 @@ Maintain original meaning. If already correct, return "No errors found".`;
     setIsTyping(true);
     setError(null);
     debouncedProcessText(currentText);
-    // Clear the text stored in the ref
+    // Add the new message with the original text
     const newMessage = {
       _id: Math.round(Math.random() * 1000000),
       text: "",
@@ -118,16 +128,21 @@ Maintain original meaning. If already correct, return "No errors found".`;
     setMessages((prev) => [newMessage, ...prev]);
 
     textRef.current = "";
-    // Also clear the visible text in the TextInput
+    // Clear the visible text in the TextInput
     if (inputRef.current) {
       inputRef.current.clear();
     }
   }, [debouncedProcessText]);
+  const { top } = useSafeAreaInsets();
 
   return (
-    <KeyboardAvoidingView behavior="height" style={styles.container}>
+    <ReactNativeModal animationIn={"fadeIn"} isVisible={true} avoidKeyboard={true} style={[styles.container]}>
+      <StatusBar backgroundColor={Colors.primary} />
       <View style={styles.messageContainer}>
-        <Text style={styles.headerText}>Messages</Text>
+        <View style={[styles.header, { paddingTop: top / 2 }]}>
+          <Text style={styles.headerText}>TransMe</Text>
+          <Text style={styles.headerDescriptionText}>Make it work, make it right, make it fast.</Text>
+        </View>
         <FlatList
           data={messages}
           keyExtractor={() => Math.random().toString()}
@@ -136,28 +151,47 @@ Maintain original meaning. If already correct, return "No errors found".`;
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
         />
       </View>
-      <View style={styles.FooterContainer}>
+      <View style={[styles.FooterContainer]}>
         <TextInput
           ref={inputRef} // Attach the ref here
           style={styles.input}
           placeholder="Type your message..."
+          placeholderTextColor={Colors.placeholder}
           defaultValue=""
           onChangeText={handleChangeText}
           multiline={true}
         />
         <TouchableOpacity style={styles.sendContainer} onPress={handleSend}>
-          <MaterialIcons name="send" size={30} color="red" />
+          <MaterialIcons name="send" size={30} color={Colors.text} />
         </TouchableOpacity>
       </View>
-      {isTyping && <ActivityIndicator style={styles.typingIndicator} />}
+      {isTyping && <ActivityIndicator style={styles.typingIndicator} color={Colors.primary} />}
       {error && <Text style={styles.errorText}>{error}</Text>}
-    </KeyboardAvoidingView>
+    </ReactNativeModal>
   );
 };
 
 const styles = StyleSheet.create({
+  header: {
+    backgroundColor: Colors.primary,
+    paddingBottom: 10,
+    paddingHorizontal: 10,
+    borderBottomEndRadius: 15,
+    borderBottomStartRadius: 15,
+  },
+  headerText: {
+    color: Colors.text,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  headerDescriptionText: {
+    color: Colors.text,
+    fontSize: 14,
+  },
   container: {
     flex: 1,
+    backgroundColor: Colors.background,
+    margin: 0,
   },
   messageContainer: {
     flex: 1,
@@ -165,46 +199,32 @@ const styles = StyleSheet.create({
   FooterContainer: {
     flexDirection: "row",
     borderWidth: 1,
-    borderColor: "red",
-    borderRadius: 8,
-    margin: 5,
+    borderColor: Colors.border,
+    borderRadius: 50,
+    marginVertical: 5,
+    marginHorizontal: 10,
     alignItems: "center",
+    backgroundColor: Colors.surface,
   },
   input: {
     width: "88%",
     maxHeight: 300,
     paddingLeft: 10,
     paddingBottom: 8,
+    color: Colors.text,
+    // backgroundColor: Colors.background,
   },
   sendContainer: {
     padding: 10,
-  },
-  systemBubble: {
-    backgroundColor: "#FFF",
-    borderRadius: 12,
-    padding: 16,
-    margin: 8,
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-  },
-  userBubble: {
-    backgroundColor: "#DCF8C6",
-    borderRadius: 12,
-    padding: 16,
-    margin: 8,
   },
   typingIndicator: {
     margin: 10,
   },
   errorText: {
-    color: "red",
+    color: Colors.error,
     fontSize: 12,
     textAlign: "center",
     margin: 5,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: "bold",
   },
 });
 

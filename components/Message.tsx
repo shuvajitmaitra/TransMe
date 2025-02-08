@@ -4,6 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { TResult } from "@/type/messageType";
 import BlinkingText from "./BlinkingText";
 import * as Clipboard from "expo-clipboard";
+import Colors from "@/constants/Colors";
 
 const Message = ({ message }: { message: TResult }) => {
   // Copies the original text to the clipboard
@@ -34,7 +35,7 @@ const Message = ({ message }: { message: TResult }) => {
       {/* Original Message Row with the copy icon placed outside the bubble */}
       <View style={styles.originalRow}>
         <TouchableOpacity onPress={handleCopyOriginal} style={styles.copyIconOutside}>
-          <MaterialIcons name="content-copy" size={18} color="#4a90e2" />
+          <MaterialIcons name="content-copy" size={18} color={Colors.primary} />
         </TouchableOpacity>
         <View style={styles.originalBubble}>
           <Text style={styles.originalText}>{message.originalText}</Text>
@@ -50,14 +51,16 @@ const Message = ({ message }: { message: TResult }) => {
             <BlinkingText style={styles.blinkingText}>Thinking...</BlinkingText>
           )}
         </View>
-        <View style={styles.responseIcons}>
-          <TouchableOpacity onPress={handleCopyResponse} style={styles.responseIcon}>
-            <MaterialIcons name="content-copy" size={18} color="#4a90e2" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleShareResponse} style={styles.responseIcon}>
-            <MaterialIcons name="share" size={18} color="#4a90e2" />
-          </TouchableOpacity>
-        </View>
+        {message.text && message.text !== "No errors found" && (
+          <View style={styles.responseIcons}>
+            <TouchableOpacity onPress={handleCopyResponse} style={styles.responseIcon}>
+              <MaterialIcons name="content-copy" size={18} color={Colors.primary} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleShareResponse} style={styles.responseIcon}>
+              <MaterialIcons name="share" size={18} color={Colors.primary} />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -70,24 +73,21 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 16,
   },
-  // Row container for the original message: icon on the left, bubble on the right
   originalRow: {
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
     marginBottom: 12,
   },
-  // The copy icon placed outside the original message bubble
   copyIconOutside: {
     padding: 6,
-    backgroundColor: "#eee",
+    backgroundColor: Colors.surface,
     borderRadius: 20,
     marginRight: 8,
     alignSelf: "flex-start",
   },
-  // Blue bubble for the original message with a "tail" effect (bottom-right sharper)
   originalBubble: {
-    backgroundColor: "#4a90e2",
+    backgroundColor: Colors.primary,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     borderBottomLeftRadius: 16,
@@ -101,17 +101,14 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   originalText: {
-    color: "#fff",
+    color: Colors.text,
     fontSize: 15,
   },
-  // Container for the corrected message bubble and its icons;
-  // no fixed width ensures it only occupies as much space as its content
   responseRow: {
     alignSelf: "flex-start",
   },
-  // White bubble for the corrected message with a "tail" effect (bottom-left sharper)
   responseBubble: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     borderBottomRightRadius: 16,
@@ -126,15 +123,14 @@ const styles = StyleSheet.create({
     maxWidth: "90%",
   },
   responseText: {
-    color: "#333",
+    color: Colors.text,
     fontSize: 15,
   },
   blinkingText: {
     fontSize: 15,
-    color: "#aaa",
+    color: Colors.placeholder,
     fontStyle: "italic",
   },
-  // Container for copy and share icons in the corrected message bubble
   responseIcons: {
     flexDirection: "row",
     justifyContent: "flex-start",
@@ -143,7 +139,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     padding: 4,
     borderWidth: 1,
-    borderColor: "#4a90e2",
+    borderColor: Colors.primary,
     borderRadius: 50,
   },
 });
