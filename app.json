@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "TransMe",
-    "slug": "TransMe",
+    "name": "ReviseMe",
+    "slug": "ReviseMe",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -9,13 +9,23 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "splash": {
+        "image": "./assets/images/splash-icon.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#697565"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "blue"
       }
+    },
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#697565"
     },
     "web": {
       "bundler": "metro",
@@ -28,9 +38,13 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "imageWidth": 300,
+          "resizeMode": "cover",
+          "backgroundColor": "#000000",
+          "dark": {
+            "image": "./assets/images/splash-icon.png",
+            "backgroundColor": "#000000"
+          }
         }
       ]
     ],

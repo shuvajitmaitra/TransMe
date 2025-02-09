@@ -1,16 +1,5 @@
 import React, { useRef, useState, useCallback, useMemo } from "react";
-import {
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  TextInput,
-  Text,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  FlatList,
-  Platform,
-  StatusBar,
-} from "react-native";
+import { View, StyleSheet, TextInput, Text, TouchableOpacity, FlatList, Platform, StatusBar } from "react-native";
 import { debounce } from "lodash";
 import { MaterialIcons } from "@expo/vector-icons";
 import { API_KEY } from "@/constants/env";
@@ -18,7 +7,6 @@ import Message from "@/components/Message";
 import { TResult } from "@/type/messageType";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/constants/Colors";
-import { Stack } from "expo-router";
 import ReactNativeModal from "react-native-modal";
 
 export const generateContent = async (prompt: string) => {
@@ -49,7 +37,6 @@ export const generateContent = async (prompt: string) => {
     throw error;
   }
 };
-
 const GrammarCorrector = () => {
   const textRef = useRef("");
   const inputRef = useRef<TextInput>(null);
@@ -138,38 +125,40 @@ If user send follow up question give the answer of it`;
   const { top, bottom } = useSafeAreaInsets();
 
   return (
-    <ReactNativeModal animationIn={"fadeIn"} isVisible={true} avoidKeyboard={true} style={[styles.container]}>
-      <StatusBar backgroundColor={Colors.primary} />
-      <View style={styles.messageContainer}>
-        <View style={[styles.header, { paddingTop: Platform.OS === "ios" ? top / 1.2 : top / 2 }]}>
-          <Text style={styles.headerText}>ReviseMe</Text>
-          <Text style={styles.headerDescriptionText}>Make it work, make it right, make it fast.</Text>
+    <View style={{ flex: 1, backgroundColor: Colors.primary }}>
+      <ReactNativeModal animationIn={"fadeIn"} isVisible={true} avoidKeyboard={true} style={[styles.container]}>
+        <StatusBar backgroundColor={Colors.primary} />
+        <View style={styles.messageContainer}>
+          <View style={[styles.header, { paddingTop: Platform.OS === "ios" ? top / 1.2 : top / 2 }]}>
+            <Text style={styles.headerText}>ReviseMe</Text>
+            <Text style={styles.headerDescriptionText}>Make it work, make it right, make it fast.</Text>
+          </View>
+          <FlatList
+            data={messages}
+            keyExtractor={() => Math.random().toString()}
+            renderItem={({ item }) => <Message message={item} />}
+            inverted
+            ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+          />
         </View>
-        <FlatList
-          data={messages}
-          keyExtractor={() => Math.random().toString()}
-          renderItem={({ item }) => <Message message={item} />}
-          inverted
-          ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-        />
-      </View>
-      <View style={[styles.FooterContainer, Platform.OS === "ios" && { marginBottom: bottom / 1.5 }]}>
-        <TextInput
-          ref={inputRef} // Attach the ref here
-          style={styles.input}
-          placeholder="Type your message..."
-          placeholderTextColor={Colors.placeholder}
-          defaultValue=""
-          onChangeText={handleChangeText}
-          multiline={true}
-        />
-        <TouchableOpacity style={styles.sendContainer} onPress={handleSend}>
-          <MaterialIcons name="send" size={30} color={Colors.text} />
-        </TouchableOpacity>
-      </View>
-      {/* {isTyping && <ActivityIndicator style={styles.typingIndicator} color={Colors.primary} />} */}
-      {error && <Text style={styles.errorText}>{error}</Text>}
-    </ReactNativeModal>
+        <View style={[styles.FooterContainer, Platform.OS === "ios" && { marginBottom: bottom / 1.5 }]}>
+          <TextInput
+            ref={inputRef} // Attach the ref here
+            style={styles.input}
+            placeholder="Type your message..."
+            placeholderTextColor={Colors.placeholder}
+            defaultValue=""
+            onChangeText={handleChangeText}
+            multiline={true}
+          />
+          <TouchableOpacity style={styles.sendContainer} onPress={handleSend}>
+            <MaterialIcons name="send" size={30} color={Colors.text} />
+          </TouchableOpacity>
+        </View>
+        {/* {isTyping && <ActivityIndicator style={styles.typingIndicator} color={Colors.primary} />} */}
+        {error && <Text style={styles.errorText}>{error}</Text>}
+      </ReactNativeModal>
+    </View>
   );
 };
 

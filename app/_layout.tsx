@@ -10,7 +10,7 @@ export default function Layout() {
         headerShown: false,
         statusBarTranslucent: true,
         statusBarBackgroundColor: Colors.primary,
-        contentStyle: { backgroundColor: Colors.background },
+        contentStyle: { backgroundColor: Colors.primary },
         keyboardHandlingEnabled: true,
       }}
     />
