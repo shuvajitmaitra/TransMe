@@ -19,8 +19,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "blue"
-      }
+        "backgroundColor": "#697565"
+      },
+      "package": "com.shuvajitmaitra.ReviseMe"
     },
     "splash": {
       "image": "./assets/images/splash-icon.png",
@@ -50,6 +51,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "c67bb497-44de-4ff1-81dd-073a37d8d4d0"
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback, useMemo } from "react";
-import { View, StyleSheet, TextInput, Text, TouchableOpacity, FlatList, Platform, StatusBar } from "react-native";
+import { View, StyleSheet, TextInput, Text, TouchableOpacity, FlatList, Platform, StatusBar, Keyboard } from "react-native";
 import { debounce } from "lodash";
 import { MaterialIcons } from "@expo/vector-icons";
 import { API_KEY } from "@/constants/env";
@@ -118,6 +118,7 @@ If user send follow up question give the answer of it`;
 
     textRef.current = "";
     // Clear the visible text in the TextInput
+    Keyboard.dismiss();
     if (inputRef.current) {
       inputRef.current.clear();
     }
